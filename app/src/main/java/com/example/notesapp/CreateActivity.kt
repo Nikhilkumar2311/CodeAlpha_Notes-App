@@ -15,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class CreateActivity : AppCompatActivity() {
     private lateinit var mCreateTitleOfNote: EditText
     private lateinit var mCreateContentOfNote: EditText
-   private lateinit var mSaveNote: FloatingActionButton
+    private lateinit var mSaveNote: FloatingActionButton
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var toolbar: Toolbar
 

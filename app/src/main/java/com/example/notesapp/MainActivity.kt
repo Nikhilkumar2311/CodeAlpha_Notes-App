@@ -3,13 +3,17 @@ package com.example.notesapp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -19,6 +23,7 @@ import com.example.notesapp.R
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.play.core.integrity.v
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.Random
@@ -102,14 +107,36 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val 
         val colorCode = getRandomColor()
         holder.mNote.setBackgroundColor(holder.itemView.resources.getColor(colorCode, null))
 
+        val popupButton: ImageView = holder.itemView.findViewById(R.id.menupopbutton)
+
 
         holder.notetitle.text = model.title
         holder.notecontent.text = model.content
 
         holder.itemView.setOnClickListener {
-            // note details
-            Toast.makeText(it.context, "This is Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, NotesActivity::class.java)
+            context.startActivity(intent)
+            //Toast.makeText(it.context, "This is Clicked", Toast.LENGTH_SHORT).show()
         }
+
+        popupButton.setOnClickListener { v ->
+            val popupMenu = PopupMenu(v.context, v)
+            popupMenu.gravity = Gravity.END
+
+            popupMenu.menu.add("Edit").setOnMenuItemClickListener {
+                val intent = Intent(v.context, EditActivity::class.java)
+                v.context.startActivity(intent)
+                false
+            }
+
+            popupMenu.menu.add("Delete").setOnMenuItemClickListener {
+                Toast.makeText(v.context, "This note is deleted", Toast.LENGTH_SHORT).show()
+                false
+            }
+
+            popupMenu.show()
+        }
+
 
     }
 
