@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var noteAdapter: NoteAdapter
@@ -86,7 +88,7 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val notetitle: TextView = itemView.findViewById(R.id.notetitle)
         val notecontent: TextView = itemView.findViewById(R.id.notecontent)
-        val mnote: LinearLayout = itemView.findViewById(R.id.note)
+        val mNote: LinearLayout = itemView.findViewById(R.id.note)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -96,7 +98,37 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val 
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int, model: Firebasemodel) {
+
+        val colorCode = getRandomColor()
+        holder.mNote.setBackgroundColor(holder.itemView.resources.getColor(colorCode, null))
+
+
         holder.notetitle.text = model.title
         holder.notecontent.text = model.content
+
+        holder.itemView.setOnClickListener {
+            // note details
+            Toast.makeText(it.context, "This is Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun getRandomColor(): Int {
+        val colorCodes = mutableListOf<Int>()
+        colorCodes.add(R.color.gray)
+        colorCodes.add(R.color.yellow)
+        colorCodes.add(R.color.lightgreen)
+        colorCodes.add(R.color.pink)
+        colorCodes.add(R.color.lightpurple)
+        colorCodes.add(R.color.skyblue)
+        colorCodes.add(R.color.red)
+        colorCodes.add(R.color.blue)
+        colorCodes.add(R.color.greenlight)
+        colorCodes.add(R.color.notgreen)
+
+        val random = Random()
+        val number = random.nextInt(colorCodes.size)
+        return colorCodes[number]
+
     }
 }
