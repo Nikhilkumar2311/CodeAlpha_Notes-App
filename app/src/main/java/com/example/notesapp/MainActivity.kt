@@ -23,6 +23,7 @@ import com.example.notesapp.R
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.play.core.integrity.i
 import com.google.android.play.core.integrity.v
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -90,6 +91,8 @@ class MainActivity : AppCompatActivity() {
 class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val context: Context) :
     FirestoreRecyclerAdapter<Firebasemodel, NoteAdapter.NoteViewHolder>(options) {
 
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val notetitle: TextView = itemView.findViewById(R.id.notetitle)
         val notecontent: TextView = itemView.findViewById(R.id.notecontent)
@@ -113,10 +116,18 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val 
         holder.notetitle.text = model.title
         holder.notecontent.text = model.content
 
+        val docId: String = snapshots.getSnapshot(position).id
+
+
         holder.itemView.setOnClickListener {
             val intent = Intent(context, NotesActivity::class.java)
+
+            intent.putExtra("title", model.title)
+            intent.putExtra("content", model.content)
+            intent.putExtra("noteId", docId)
+
+
             context.startActivity(intent)
-            //Toast.makeText(it.context, "This is Clicked", Toast.LENGTH_SHORT).show()
         }
 
         popupButton.setOnClickListener { v ->
@@ -125,13 +136,31 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Firebasemodel>, private val 
 
             popupMenu.menu.add("Edit").setOnMenuItemClickListener {
                 val intent = Intent(v.context, EditActivity::class.java)
+
+                intent.putExtra("title", model.title)
+                intent.putExtra("content", model.content)
+                intent.putExtra("noteId", docId)
+
                 v.context.startActivity(intent)
                 false
             }
 
             popupMenu.menu.add("Delete").setOnMenuItemClickListener {
-                Toast.makeText(v.context, "This note is deleted", Toast.LENGTH_SHORT).show()
-                false
+                val snapshot = snapshots.getSnapshot(position)
+                val docId = snapshot.id
+
+                val docRef = firestore.collection("notes").document(docId)
+                docRef.delete()
+
+                docRef.delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(v.context, "This note is deleted", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(v.context, "Failed to delete", Toast.LENGTH_SHORT).show()
+                    }
+
+                true
             }
 
             popupMenu.show()
