@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Notes App</string>
+    <string name="write_content_here">Write Content Here</string>
+    <string name="enter_your_note_title_here">Enter Your Note Title Here</string>
+    <string name="enter_your_note_content_here">Enter Your Note Content Here</string>
+    <string name="sample_text">Sample Text</string>
+</resources>
